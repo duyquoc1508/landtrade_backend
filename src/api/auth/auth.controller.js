@@ -1,4 +1,4 @@
-import { bufferToHex } from "ethereumjs-util";
+// import { bufferToHex } from "ethereumjs-util";
 import { personalSign, recoverPersonalSignature } from "eth-sig-util";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -6,7 +6,7 @@ dotenv.config();
 import User from "./../user/user.model";
 import { ErrorHandler } from "./../../helper/error";
 
-export async function sign(req, res, next) {
+export async function sign(req, res, _next) {
   try {
     const { nonce, publicAddress } = req.body;
     const msgBufferHex = publicAddress.toString("hex");
@@ -49,11 +49,11 @@ export async function handleAuthentication(req, res, next) {
       throw new ErrorHandler(401, "Signature verification failed");
     }
     //3. generate a new nonce for user
-    newNonce = Math.floor(Math.random() * 10000);
+    const newNonce = Math.floor(Math.random() * 10000);
     await User.findByIdAndUpdate(user._id, { nonce: newNonce });
     //4. Create JWT
     const payload = { _id: user._id, publicAddress };
-    return res.status(201).json({
+    return res.status(200).json({
       token: jwt.sign(payload, process.env.SECRET_KEY)
     });
   } catch (error) {

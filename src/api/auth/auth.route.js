@@ -1,4 +1,4 @@
-import authController from "./auth.controller";
+import * as authController from "./auth.controller";
 import { Router } from "express";
 
 const routes = new Router();
@@ -7,7 +7,7 @@ const routes = new Router();
  * req.body.signature
  * req.body.publicAddress
  */
-routes.post("/", authController.handleAuthentication);
+routes.post("/login", authController.handleAuthentication);
 
 /**POST api/v1/sign
  * req.body.publicAddress
