@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
+// import { Schema } from "mongoose";
 
 // /**
 //  * Checks if the given string is an address
@@ -54,7 +55,7 @@ const userSchema = new Schema(
     // refresh every time user sign in app
     nonce: {
       type: Number,
-      default: Math.floor(Math.random() * 1000000)
+      default: Math.floor(Math.random() * 10000)
     },
     publicAddress: {
       type: String,

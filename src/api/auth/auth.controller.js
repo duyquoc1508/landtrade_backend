@@ -1,8 +1,7 @@
 // import { bufferToHex } from "ethereumjs-util";
 import { personalSign, recoverPersonalSignature } from "eth-sig-util";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
+import "dotenv/config";
 import User from "./../user/user.model";
 import { ErrorHandler } from "./../../helper/error";
 
@@ -10,6 +9,7 @@ export async function sign(req, res, _next) {
   try {
     const { nonce, publicAddress } = req.body;
     const msgBufferHex = publicAddress.toString("hex");
+    // const msg = `I am signing my one-time nonce: ${user.nonce}`;
     let signature = personalSign(msgBufferHex, nonce);
     return res.status(200).json({ signature, publicAddress });
   } catch (error) {
@@ -52,9 +52,17 @@ export async function handleAuthentication(req, res, next) {
     const newNonce = Math.floor(Math.random() * 10000);
     await User.findByIdAndUpdate(user._id, { nonce: newNonce });
     //4. Create JWT
-    const payload = { _id: user._id, publicAddress };
+    const payload = {
+      publicAddress,
+      _id: user._id
+      // expires: Date.now() + parseInt(process.env.JWT_EXPIRATION_MS)
+    };
+    // set token life = 1 weeks = 604800000 ms
     return res.status(200).json({
-      token: jwt.sign(payload, process.env.SECRET_KEY)
+      statusCode: 200,
+      access_token: jwt.sign(payload, process.env.SECRET_KEY, {
+        expiresIn: process.env.JWT_EXPIRATION_MS
+      })
     });
   } catch (error) {
     next(error);

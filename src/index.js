@@ -19,7 +19,7 @@ app.use((err, _req, res, _next) => {
   handleError(err, res);
 });
 
-/** return not found if not exists endpoint */
+// return not found if not exists endpoint
 app.use((req, res) => {
   res.status(404).send({ url: req.originalUrl + " not found." });
 });

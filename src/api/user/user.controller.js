@@ -10,23 +10,31 @@ async function checkExistsAddress(publicAddress) {
   }
 }
 
-export async function findPublicAddress(req, res, next) {
+/**
+ * Check address exists in database
+ * @return {User}
+ */
+export async function checkAddressRegistered(req, res, next) {
   try {
     // If a query string publicAddress=... is given, then filter results
     const publicAddress = req.query.publicAddress;
-    let user = await User.findOne({ publicAddress });
+    let user = await User.findOne({ publicAddress }).select("nonce");
     if (!user) {
       throw new ErrorHandler(404, "Public address not found!");
     }
     return res.status(200).json({
       statusCode: 200,
-      data
+      data: user
     });
   } catch (error) {
     next(error);
   }
 }
 
+/**
+ * Create new user
+ * @return {User}
+ */
 export async function createUser(req, res, next) {
   try {
     const { publicAddress } = req.body;
@@ -46,7 +54,7 @@ export async function createUser(req, res, next) {
 }
 
 /**
- * get user profile from public address
+ * Get full user profile with publicAddress
  */
 export async function getUserProfile(req, res, next) {
   // AccessToken payload is in req.user, especially its '_id' field

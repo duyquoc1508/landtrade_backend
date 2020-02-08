@@ -4,10 +4,19 @@ import { authJwt } from "../../service/passport.service";
 
 const routes = new Router();
 
-routes.get("/", userController.findPublicAddress);
+/**GET api/v1/users
+ * req.query.publicAddress
+ */
+routes.get("/", userController.checkAddressRegistered);
 
-routes.post("/", userController.createUser);
-
+/**GET api/v1/users/{{publicAddress}}
+ * req.params.publicAddress
+ */
 routes.get("/:publicAddress", authJwt, userController.getUserProfile);
+
+/**POST api/v1/users
+ * req.body.publicAddress
+ */
+routes.post("/", userController.createUser);
 
 export default routes;

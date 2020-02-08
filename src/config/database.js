@@ -9,7 +9,8 @@ try {
   mongoose.connect(constants.MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true
+    useCreateIndex: true,
+    useFindAndModify: false
   });
 } catch (err) {
   mongoose.createConnection(constants.MONGO_URL);
