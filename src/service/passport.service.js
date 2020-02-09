@@ -20,6 +20,7 @@ const jwtStrategy = new JwtStrategy(jwtOpts, async (payload, done) => {
     //   // return done("Token expired");
     // }
     const user = await User.findById(payload._id);
+    if (!user) return done("User not found", false);
     return done(null, user);
   } catch (error) {
     return done(error, false);
@@ -33,13 +34,21 @@ passport.use(jwtStrategy);
 // handle errors passport middleware
 export const authJwt = (req, res, next) => {
   passport.authenticate("jwt", { session: false }, (error, user, info) => {
+    // console.log("TCL: authJwt -> error", error);
+    // console.log("TCL: authJwt -> user", user);
+    // console.log("TCL: authJwt -> info", info);
+    let info_msg = undefined;
+    if (info) {
+      info_msg = info.message;
+    }
     // send the error response to client
-    if (error || !user) {
+    if (info_msg || error) {
       return res.status(401).json({
         statusCode: 401,
-        message: info || error.message
+        message: info_msg || error
       });
     }
+    req.user = user;
     next(); // continue to next middleware if no error.
   })(req, res, next);
   /* passport.authentication returns a function,
