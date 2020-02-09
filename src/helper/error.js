@@ -18,12 +18,13 @@ export class ErrorHandler extends Error {
  */
 export const handleError = (err, res) => {
   try {
-    const { statusCode, message } = err;
+    const statusCode = err.statusCode || 500;
+    const { message } = err;
     res.status(statusCode).json({
       statusCode: statusCode,
       message
     });
   } catch (error) {
-    res.status(500).send(err);
+    res.status(500).json({ statusCode: 500, message: error });
   }
 };
