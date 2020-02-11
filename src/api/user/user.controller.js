@@ -44,12 +44,7 @@ export async function createUser(req, res, next) {
       data: user
     });
   } catch (error) {
-    // handle error field (require, validate, unique) || error from model
-    if (error.name === "ValidationError" || error.code === 11000) {
-      next(new ErrorHandler(400, error.message));
-    } else {
-      next(error);
-    }
+    next(error);
   }
 }
 

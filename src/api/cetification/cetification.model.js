@@ -10,26 +10,30 @@ const cetificationSchema = new Schema(
     title: {
       type: String
     },
+    // II. Land lot, house and other properties attaching with land
     properties: {
       landLot: {
         landLotNo: Number,
-        landMapSheetNo: Number,
-        landAddress: String,
-        landArea: Number, //m2
-        landFormOfUse: String,
-        landPurposeOfUse: String,
-        landTimeOfUse: String,
-        landOriginOfUse: String
+        mapSheetNo: Number,
+        address: String,
+        area: Number, //m2
+        formOfUse: {
+          private: Number, //m2
+          common: Number //m2
+        },
+        purposeOfUse: String,
+        timeOfUse: String,
+        originOfUse: String
       },
       house: {
-        houseAddress: String,
+        address: String,
         houseType: String,
-        houseApartmentName: String,
-        houseConstructionArea: String,
-        houseFloorArea: String,
-        houseFormOfOwner: String,
-        houseClass: String,
-        houseTimeOfUse: String
+        apartmentName: String,
+        constructionArea: Number,
+        floorArea: String,
+        formOfOwn: String,
+        level: Number,
+        timeOfUse: String
       },
       otherConstruction: String,
       //production forest is an artificial forest

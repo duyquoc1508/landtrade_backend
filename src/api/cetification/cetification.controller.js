@@ -1,8 +1,9 @@
 import Cetification from "./cetification.model";
 import { ErrorHandler } from "./../../helper/error";
 
-const checkResourceOwner = (idOwnerResource, idCurrentUser) => {
-  return idOwnerResource === idCurrentUser;
+const checkResourceOwner = (idResourceOwner, idCurrentUser) => {
+  if (idResourceOwner.toString() != idCurrentUser)
+    throw new ErrorHandler(403, "You are not permission access to this resource");
 };
 
 // Get cetification
@@ -61,40 +62,35 @@ export async function createCetification(req, res, next) {
   }
 }
 
+// Update cetification
 export async function updateCetification(req, res, next) {
   try {
     const newCetification = req.body;
-    // const cetification = await Cetification.findById(req.params.idCetification);
-    // if (!cetification) {
-    //   throw new ErrorHandler(404, "Cetification not found");
-    // }
-    // //check resource owner
-    // if (!checkResourceOwner(cetification.owner, req.user._id)) {
-    //   throw new ErrorHandler(403, "You are not permission to access");
-    // }
-    console.log(req.user._id);
-    const cetification = await Cetification.findOneAndUpdate(
-      { _id: req.params.idCetification, owner: req.user._id },
-      newCetification,
-      {
-        new: true
-      }
-    );
-    console.log(cetification);
-    return res.status(200).json({ statusCode: 200, message: "Cetification updated successfully" });
+    const cetification = await Cetification.findById(req.params.idCetification);
+    if (!cetification) {
+      throw new ErrorHandler(404, "Cetification not found");
+    }
+    //check resource owner
+    checkResourceOwner(cetification.owner, req.user._id);
+    await Cetification.findByIdAndUpdate(req.params.idCetification, newCetification);
+    return res.status(200).json({ statusCode: 200, message: "Update cetification successfully" });
   } catch (error) {
     next(error);
   }
 }
 
+// Delete cetification
 export async function deleteCetification(req, res, next) {
   try {
-    await Cetification.findOneAndDelete({
-      _id: req.params.idCetification,
-      owner: req.user._id
-    });
+    const cetification = await Cetification.findById(req.params.idCetification);
+    if (!cetification) {
+      throw new ErrorHandler(404, "Cetification not found");
+    }
+    //check resource owner
+    checkResourceOwner(cetification.owner, req.user._id);
+    await Cetification.findOneAndDelete(req.params.idCetification);
     // or status code 204 without data in the response
-    return res.status(200).json({ statusCode: 200, message: "Deleted cetification successfully" });
+    return res.status(200).json({ statusCode: 200, message: "Delete cetification successfully" });
   } catch (error) {
     next(error);
   }
