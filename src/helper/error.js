@@ -18,12 +18,23 @@ export class ErrorHandler extends Error {
  */
 export const handleError = (err, res) => {
   try {
-    const statusCode = err.statusCode || 500;
-    const { message } = err;
-    res.status(statusCode).json({
-      statusCode: statusCode,
-      message
-    });
+    // Handle database error
+    if (err.name === "MongoError") {
+      const { message } = err;
+      // handle error fields (require, validate, unique)
+      if (err.code === 11000) {
+        return res.status(409).json({ statusCode: 409, message }); // Conflict
+      } else {
+        return res.status(503).json({ statusCode: 503, message }); // Service Unavailable
+      }
+    } else {
+      // Normal error
+      const statusCode = err.statusCode || 500;
+      return res.status(statusCode).json({
+        statusCode,
+        message: err.message
+      });
+    }
   } catch (error) {
     res.status(500).json({ statusCode: 500, message: error });
   }
